@@ -1,7 +1,6 @@
 # Overview ----------------------------------------------------------------
 
-# For each question/prompt, write the necessary code to calculate the answer.
-
+#This is one of my first analysis projects done in R that looks at some Covid Data. Nothing too complex here, this is just meant to demonstrate that I can use R!
 
 
 library("tidyverse")
