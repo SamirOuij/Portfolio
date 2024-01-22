@@ -1,0 +1,315 @@
+GO
+ALTER PROCEDURE get_customer_type
+@GetCustomerTypeName VARCHAR(100),
+@GetCustomerTypeID INT OUTPUT
+AS
+BEGIN
+    SELECT @GetCustomerTypeID = CustomerTypeID
+    FROM tblCustomer_Type
+    WHERE CustomerTypeName = @GetCustomerTypeName
+END
+GO
+
+GO
+ALTER PROCEDURE get_order_type
+@GetOrderTypeName VARCHAR(100),
+@OrderTypeID INT OUTPUT
+AS
+BEGIN
+    SELECT @OrderTypeID = OrderTypeID
+    FROM tblOrder_Type
+    WHERE OrderTypeName = @GetOrderTypeName
+END
+GO
+
+GO
+ALTER PROCEDURE get_pay_type
+@GetPayTypeName VARCHAR(100),
+@GetPayTypeID INT OUTPUT
+AS
+BEGIN
+    SELECT @GetPayTypeID = PaymentTypeID
+    FROM tblPayment_Type
+    WHERE PaymentTypeName = @GetPayTypeName
+END
+GO
+
+GO
+ALTER PROCEDURE get_employee_type
+@GetEmployeeTypeName VARCHAR(100),
+@GetEmployeeTypeID INT OUTPUT
+AS
+BEGIN
+    SELECT @GetEmployeeTypeID = EmployeeTypeID
+    FROM tblEmployee_Type
+    WHERE EmployeeTypeName = @GetEmployeeTypeName 
+END
+GO
+
+GO
+ALTER PROCEDURE get_equipment_type
+@GetEquipmentTypeName VARCHAR(100),
+@GetEquipmentTypeID INT OUTPUT
+AS
+BEGIN
+    SELECT @GetEquipmentTypeID = EquipmentTypeID
+    FROM tblEquipment_Type
+    WHERE EquipmentTypeName = @GetEquipmentTypeName
+END
+GO
+
+GO
+ALTER PROCEDURE get_food_types
+@GetFoodTypeName VARCHAR(100),
+@GetFoodTypeID INT OUTPUT
+AS
+BEGIN
+    SELECT @GetFoodTypeID = FoodTypeID
+    FROM tblFood_Type
+    WHERE FoodTypeName = @GetFoodTypeName  
+END
+GO
+
+GO
+ALTER PROCEDURE InsertCustomer
+    @SPCustomerFName VARCHAR(50),
+    @SPCustomerLName VARCHAR(50),
+    @SPCustomerDOB DATE,
+    @SPCustomerTypeName VARCHAR(100)
+AS
+BEGIN
+    DECLARE @CT_ID INT
+
+    EXEC get_customer_type
+    @GetCustomerTypeName = @SPCustomerTypeName,
+    @GetCustomerTypeID = @CT_ID OUTPUT
+
+    BEGIN TRANSACTION
+    INSERT INTO tblCustomer(CustomerFname, CustomerLname, CustomerDOB, CustomerTypeID)
+    VALUES (@SPCustomerFName, @SPCustomerLName, @SPCustomerDOB, @CT_ID)
+    COMMIT TRANSACTION
+END
+GO
+
+GO
+ALTER PROCEDURE InsertEmployee
+    @SPEmployeeFName VARCHAR(50),
+    @SPEmployeeLName VARCHAR(50),
+    @SPEmployeeDOB DATE,
+    @SPEmployeeTypeName VARCHAR(100)
+AS
+BEGIN
+    DECLARE @ET_ID INT
+
+    EXEC get_employee_type
+    @GetEmployeeTypeName = @SPEmployeeTypeName,
+    @GetEmployeeTypeID = @ET_ID OUTPUT
+
+    BEGIN TRANSACTION
+    INSERT INTO tblEmployee(EmployeeFname, EmployeeLname, EmployeeDOB, EmployeeTypeID)
+    VALUES (@SPEmployeeFName, @SPEmployeeLName, @SPEmployeeDOB, @ET_ID)
+    COMMIT TRANSACTION
+END
+GO
+
+GO
+ALTER PROCEDURE InsertOrder
+    @SPCustomerID INT,
+    @SPPaymentTypeName VARCHAR(100),
+    @SPOrderTypeName VARCHAR(100),
+    @SPOrderDate DATE
+AS
+BEGIN
+    DECLARE @PT_ID INT, @OT_ID INT
+
+    EXEC get_pay_type
+    @GetPayTypeName = @SPPaymentTypeName,
+    @GetPayTypeID = @PT_ID OUTPUT
+
+    EXEC get_order_type
+    @GetOrderTypeName = @SPOrderTypeName,
+    @OrderTypeID = @OT_ID OUTPUT
+
+    BEGIN TRANSACTION
+    INSERT INTO tblOrder(CustomerID, PaymentTypeID, OrderTypeID, OrderDate)
+    VALUES (@SPCustomerID, @PT_ID, @OT_ID, @SPOrderDate)
+    COMMIT TRANSACTION
+END
+GO
+
+GO
+ALTER PROCEDURE InsertFood
+    @SPFoodName VARCHAR(50),
+    @SPFoodTypeName VARCHAR(100),
+    @SPPrice NUMERIC(6,2)
+AS
+BEGIN
+    DECLARE @FT_ID INT
+
+    EXEC get_food_types
+    @GetFoodTypeName = @SPFoodTypeName,
+    @GetFoodTypeID = @FT_ID OUTPUT
+
+    BEGIN TRANSACTION
+    INSERT INTO tblFood(FoodName, FoodTypeID, Price)
+    VALUES (@SPFoodName, @FT_ID, @SPPrice)
+    COMMIT TRANSACTION
+END
+GO
+
+GO
+ALTER PROCEDURE InsertEquipment
+    @SPEquipmentName VARCHAR(50),
+    @SPEquipmentTypeName VARCHAR(100)
+AS
+BEGIN
+    DECLARE @ET_ID INT
+
+    EXEC get_equipment_type
+    @GetEquipmentTypeName = @SPEquipmentTypeName,
+    @GetEquipmentTypeID = @ET_ID OUTPUT
+
+    BEGIN TRANSACTION
+    INSERT INTO tblEquipment(EquipmentName, EquipmentTypeID)
+    VALUES (@SPEquipmentName, @ET_ID)
+    COMMIT TRANSACTION
+END
+GO
+
+EXEC InsertCustomer 'Hwang Hee', 'Chan', '1995-05-02', 'Rewards Member';
+EXEC InsertCustomer 'Min Woo', 'Lee', '1986-06-02', 'Not a Rewards Member';
+EXEC InsertCustomer 'Magic', 'Johnson', '1987-07-03', 'Rewards Member';
+EXEC InsertCustomer 'Serena', 'Williams', '1988-08-04', 'Not a Rewards Member';
+EXEC InsertCustomer 'Daniel', 'Radcliffe', '1100-09-05', 'Rewards Member';
+
+EXEC InsertEmployee 'Alice', 'Miller', '1990-10-06', 'Cook';
+EXEC InsertEmployee 'James', 'Harden', '1991-11-07', 'Chef';
+EXEC InsertEmployee 'David', 'Raya', '1992-12-08', 'Cook';
+EXEC InsertEmployee 'Sophia', 'Martinez', '1993-01-09', 'Sous Chef';
+EXEC InsertEmployee 'Lewis', 'Hamilton', '1994-02-10', 'Head Sauce Chef';
+
+EXEC InsertEquipment 'Stainless Steel Pot', 'Pot';
+EXEC InsertEquipment 'Non-stick Pan', 'Pan';
+EXEC InsertEquipment 'KitchenAid Mixer', 'Appliance';
+EXEC InsertEquipment 'Knife (Dull)', 'Utensil';
+EXEC InsertEquipment 'Knife (Sharp)', 'Utensil';
+
+EXEC InsertFood 'Soutwest Salad', 'Appetizer', 29.99;
+EXEC InsertFood 'Garlic', 'Side', 0.99;
+EXEC InsertFood 'Spaghetti with Frosting', 'Main Course', 344.99;
+EXEC InsertFood 'Tiramisu', 'Dessert', 7.99;
+EXEC InsertFood 'Olive oil', 'Appetizer', 8.99;
+
+EXEC InsertOrder 6, 'Credit', 'Takeout', '2023-05-24';
+EXEC InsertOrder 7, 'Cash', 'Dine-in', '2023-05-25';
+EXEC InsertOrder 8, 'Gift Card', 'Takeout', '2023-05-26';
+EXEC InsertOrder 9, 'Credit', 'Dine-in', '2023-05-27';
+EXEC InsertOrder 10, 'Credit', 'Dine-in', '2023-05-27';
+
+
+GO
+Alter PROCEDURE get_customer
+    @CustomerId INT
+AS
+BEGIN
+    SELECT * FROM tblCustomer
+    WHERE CustomerID = @CustomerId
+END
+GO
+
+Alter PROCEDURE get_order
+    @OrderId INT
+AS
+BEGIN
+    SELECT * FROM tblOrder
+    WHERE OrderID = @OrderId
+END
+GO
+Alter PROCEDURE get_employee
+    @GetEmployeeFName VARCHAR(50),
+    @GetEmployeeLName VARCHAR(50),
+    @EmployeeId INT OUTPUT
+AS
+BEGIN
+    SELECT @EmployeeId = EmployeeID FROM tblEmployee
+    WHERE EmployeeFname = @GetEmployeeFName AND EmployeeLname = @GetEmployeeLName
+END
+GO
+
+ALTER PROCEDURE get_food
+    @GetFoodName VARCHAR(50),
+    @FoodId INT OUTPUT
+AS
+BEGIN
+    SELECT @FoodId = FoodID FROM tblFood
+    WHERE FoodName = @GetFoodName
+END
+GO
+
+ALTER PROCEDURE get_equipment
+    @GetEquipmentName VARCHAR(50),
+    @EquipmentId INT OUTPUT
+AS
+BEGIN
+    SELECT @EquipmentId = EquipmentID FROM tblEquipment
+    WHERE EquipmentName = @GetEquipmentName
+END
+GO
+
+
+GO
+ALTER PROCEDURE InsertFoodEquipment
+    @SPFoodName VARCHAR(50),
+    @SPEquipmentName VARCHAR(50)
+AS
+BEGIN
+    DECLARE @Food_ID INT, @Equip_ID INT
+
+    EXEC get_food
+    @GetFoodName = @SPFoodName,
+    @FoodId = @Food_ID OUTPUT
+
+    EXEC get_equipment
+    @GetEquipmentName = @SPEquipmentName,
+    @EquipmentId = @Equip_ID OUTPUT
+
+    BEGIN TRANSACTION
+    INSERT INTO tblFood_Equipment(FoodID, EquipmentID)
+    VALUES (@Food_ID, @Equip_ID)
+    COMMIT TRANSACTION
+END
+GO
+
+ALTER PROCEDURE InsertOrderFoodEmployee
+    @SPOrderID INT,
+    @SPFoodName VARCHAR(50),
+    @SPEmployeeFName VARCHAR(50),
+    @SPEmployeeLName VARCHAR(50)
+AS
+BEGIN
+    DECLARE @Food_ID INT, @Emp_ID INT
+
+    EXEC get_food
+    @GetFoodName = @SPFoodName,
+    @FoodId = @Food_ID OUTPUT
+
+    EXEC get_employee
+    @GetEmployeeFName = @SPEmployeeFName,
+    @GetEmployeeLName = @SPEmployeeLName,
+    @EmployeeId = @Emp_ID OUTPUT
+
+    BEGIN TRANSACTION
+    INSERT INTO tblOrder_Food_Employee(OrderID, FoodID, EmployeeID)
+    VALUES (@SPOrderID, @Food_ID, @Emp_ID)
+    COMMIT TRANSACTION
+END
+GO
+
+
+EXEC InsertFoodEquipment 'Soutwest Salad', 'Stainless Steel Pot';
+EXEC InsertFoodEquipment 'Garlic', 'Non-stick Pan';
+EXEC InsertFoodEquipment 'Spaghetti with Frosting', 'KitchenAid Mixer';
+
+EXEC InsertOrderFoodEmployee 16, 'Soutwest Salad', 'Alice', 'Miller';
+EXEC InsertOrderFoodEmployee 17, 'Garlic', 'James', 'Harden';
+EXEC InsertOrderFoodEmployee 18, 'Spaghetti with Frosting', 'David', 'Raya';
