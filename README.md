@@ -32,6 +32,12 @@ Below is a list of projects included in this portfolio:
 - **Objective**: [To demonstrate competency in R, as well as to show data literacy in a public-policy lens.]
 - **Tools Used**: [R, TidyVerse, DPLYR]
 
+- 
+### [Heart Attack Predictions]
+
+- **Objective**: [To demonstrate competency in jupyter notebooks, and to display familiarity with predictive modeling (This is logistic regression)]
+- **Tools Used**: [Python, Jupyter, Pandas, regression]
+
 
 ## Certifications
 
