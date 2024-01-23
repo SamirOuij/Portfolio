@@ -45,7 +45,7 @@ Below is a list of projects included in this portfolio:
 - **Email**: samirouijdanio@gmail.com
 
 - **Tableau Public**: https://public.tableau.com/app/profile/samir.ouijdani/vizzes
-- 
+
 I am open to collaboration and available for hire. Feel free to reach out to me for professional inquiries or any questions about the projects listed in this repository.
 
 Thank you for visiting my Data Analyst Portfolio!
